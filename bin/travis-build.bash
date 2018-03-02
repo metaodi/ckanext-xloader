@@ -34,16 +34,10 @@ sudo -u postgres psql -c 'CREATE DATABASE ckan_test WITH OWNER ckan_default;'
 sudo -u postgres psql -c "CREATE USER datastore_default WITH PASSWORD 'pass';"
 sudo -u postgres psql -c 'CREATE DATABASE datastore_test WITH OWNER datastore_default;'
 
-echo "Create full text function..."
-cp full_text_function.sql /tmp
-cd /tmp
-sudo -u postgres psql datastore_test -f full_text_function.sql
-cd -
-
 echo "Initialising the database..."
 cd ckan
-paster db init -c test-core.ini
-paster datastore set-permissions -c test-core.ini | sudo -u postgres psql 
+paster db init -c ../subdir/test.ini
+paster datastore set-permissions -c ../subdir/test.ini | sudo -u postgres psql 
 cd -
 
 echo "Installing ckanext-xloader and its requirements..."
