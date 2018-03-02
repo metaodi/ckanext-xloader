@@ -43,6 +43,7 @@ cd -
 echo "Initialising the database..."
 cd ckan
 paster db init -c test-core.ini
+paster datastore set-permissions -c test-core.ini | sudo -u postgres psql 
 cd -
 
 echo "Installing ckanext-xloader and its requirements..."
