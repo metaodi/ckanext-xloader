@@ -203,7 +203,7 @@ class TestLoadCsv(TestLoadBase):
         print self._get_column_names('test_german')
         assert_equal(
             self._get_column_names('test_german'),
-            []
+            [])
         print self._get_column_types('test_german')
         assert_equal(self._get_column_types('test_german'),
                      [u'int4', u'tsvector'] +
