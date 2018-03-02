@@ -36,8 +36,8 @@ sudo -u postgres psql -c 'CREATE DATABASE datastore_test WITH OWNER datastore_de
 
 echo "Initialising the database..."
 cd ckan
-paster db init -c ../subdir/test.ini
-paster datastore set-permissions -c ../subdir/test.ini | sudo -u postgres psql 
+paster db init -c ../test.ini
+paster datastore set-permissions -c ../test.ini | sudo -u postgres psql 
 cd -
 
 echo "Installing ckanext-xloader and its requirements..."
