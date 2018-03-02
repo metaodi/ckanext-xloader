@@ -14,6 +14,8 @@ install:
 services:
     - postgresql
     - redis
+addons:
+    postgresql: "9.3"
 script: sh bin/travis-run.sh
 after_success: coveralls
 sudo: required
