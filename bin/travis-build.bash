@@ -5,27 +5,29 @@ echo "This is travis-build.bash..."
 
 echo "Installing the packages that CKAN requires..."
 sudo apt-get update -qq
-sudo apt-get install postgresql-$PGVERSION solr-jetty libcommons-fileupload-java:amd64=1.2.2-1
+sudo apt-get install solr-jetty libcommons-fileupload-java
 
 echo "Installing CKAN and its Python dependencies..."
 git clone https://github.com/ckan/ckan
 cd ckan
-export latest_ckan_release_branch=`git branch --all | grep remotes/origin/release-v | sort -r | sed 's/remotes\/origin\///g' | head -n 1`
-echo "CKAN branch: $latest_ckan_release_branch"
-git checkout $latest_ckan_release_branch
+if [ $CKANVERSION == 'master' ]
+then
+    echo "CKAN version: master"
+else
+    CKAN_TAG=$(git tag | grep ^ckan-$CKANVERSION | sort --version-sort | tail -n 1)
+    git checkout $CKAN_TAG
+    echo "CKAN version: ${CKAN_TAG#ckan-}"
+fi
 python setup.py develop
 pip install -r requirements.txt --allow-all-external
 pip install -r dev-requirements.txt --allow-all-external
 cd -
 
-echo "Creating the PostgreSQL user and database..."
+echo "Creating the PostgreSQL users and databases..."
 sudo -u postgres psql -c "CREATE USER ckan_default WITH PASSWORD 'pass';"
 sudo -u postgres psql -c 'CREATE DATABASE ckan_test WITH OWNER ckan_default;'
-
-echo "SOLR config..."
-# Solr is multicore for tests on ckan master, but it's easier to run tests on
-# Travis single-core. See https://github.com/ckan/ckan/issues/2972
-sed -i -e 's/solr_url.*/solr_url = http:\/\/127.0.0.1:8983\/solr/' ckan/test-core.ini
+sudo -u postgres psql -c "CREATE USER datastore_default WITH PASSWORD 'pass';"
+sudo -u postgres psql -c 'CREATE DATABASE datastore_test WITH OWNER datastore_default;'
 
 echo "Initialising the database..."
 cd ckan
@@ -34,6 +36,7 @@ cd -
 
 echo "Installing ckanext-xloader and its requirements..."
 python setup.py develop
+pip install -r requirements.txt
 pip install -r dev-requirements.txt
 
 echo "Moving test.ini into a subdir..."
