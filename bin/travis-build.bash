@@ -29,6 +29,9 @@ sudo -u postgres psql -c 'CREATE DATABASE ckan_test WITH OWNER ckan_default;'
 sudo -u postgres psql -c "CREATE USER datastore_default WITH PASSWORD 'pass';"
 sudo -u postgres psql -c 'CREATE DATABASE datastore_test WITH OWNER datastore_default;'
 
+echo "Create full text function..."
+sudo -u postgres psql datastore_default -f full_text_function.sql
+
 echo "Initialising the database..."
 cd ckan
 paster db init -c test-core.ini
