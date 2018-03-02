@@ -30,7 +30,10 @@ sudo -u postgres psql -c "CREATE USER datastore_default WITH PASSWORD 'pass';"
 sudo -u postgres psql -c 'CREATE DATABASE datastore_test WITH OWNER datastore_default;'
 
 echo "Create full text function..."
-sudo -u postgres psql datastore_default -f full_text_function.sql
+cp full_text_function.sql /tmp
+cd /tmp
+sudo -u postgres psql datastore_test -f full_text_function.sql
+cd -
 
 echo "Initialising the database..."
 cd ckan
